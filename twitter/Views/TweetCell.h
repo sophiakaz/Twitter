@@ -19,11 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) IBOutlet UILabel *authorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *favoriteLabel;
 @property (weak, nonatomic) IBOutlet UILabel *retweetLabel;
+- (IBAction)didTapFavorite:(id)sender;
+@property (strong, nonatomic) Tweet *tweet; //originally strong
+- (void)refreshData;
 
-
-
-/*@property (strong, nonatomic) Tweet *tweet;
-
+/*
 -(void)setTweet: (Tweet *)tweet;
  */
 @end
