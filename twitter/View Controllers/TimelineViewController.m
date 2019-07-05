@@ -13,11 +13,14 @@
 #import "UIImageView+AFNetworking.h"
 #import "Tweet.h"
 #import "ComposeViewController.h"
+#import "AppDelegate.h"
+#import "LoginViewController.h"
 
 @interface TimelineViewController () <UITableViewDataSource, UITableViewDelegate, ComposeViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *tweets;
+- (IBAction)tapLogout:(id)sender;
 
 @end
 
@@ -72,8 +75,8 @@
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TweetCell"];
-        
     Tweet *tweet = self.tweets[indexPath.row];
+    cell.tweet = tweet;
     User *user = tweet.user;
     cell.authorLabel.text = user.name;
     cell.tweetLabel.text = tweet.text;
@@ -82,13 +85,22 @@
     cell.favoriteLabel.text = [NSString stringWithFormat:@"%d",tweet.favoriteCount];
     cell.retweetLabel.text = [NSString stringWithFormat:@"%d",tweet.retweetCount];
     
-    //NSLog(user.name);
     NSString *profileURLString = user.profileURL;
     NSURL *profileURL = [NSURL URLWithString:profileURLString];
     cell.profileImage.image = nil;
     [cell.profileImage setImageWithURL:profileURL];
     
-    //[cell setTweet:tweet];
+    if (cell.tweet.favorited == YES) {
+        cell.favoriteLabel.textColor = [UIColor redColor];
+        UIImage *img = [UIImage imageNamed:@"favor-icon-red"];
+        [cell.favoriteButton setImage:img forState:UIControlStateNormal];
+    }
+    
+    if (cell.tweet.retweeted == YES) {
+        cell.retweetLabel.textColor = [UIColor greenColor];
+        UIImage *img = [UIImage imageNamed:@"retweet-icon-green"];
+        [cell.retweetButton setImage:img forState:UIControlStateNormal];
+    }
     return cell;
 }
 
@@ -118,4 +130,12 @@
     [self.tableView reloadData];
 }
 
+- (IBAction)tapLogout:(id)sender {
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    LoginViewController *loginViewController = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+    appDelegate.window.rootViewController = loginViewController;
+    [[APIManager shared] logout];
+}
 @end
