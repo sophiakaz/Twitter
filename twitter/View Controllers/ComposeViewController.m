@@ -11,7 +11,7 @@
 #import "Tweet.h"
 #import "TimelineViewController.h"
 
-@interface ComposeViewController ()
+@interface ComposeViewController () <UITextViewDelegate>
 @property (weak, nonatomic) IBOutlet UITextView *tweetText;
 
 @end
@@ -22,6 +22,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.tweetText.delegate = self;
     // Do any additional setup after loading the view.
 }
 
@@ -54,6 +56,14 @@
         }
     }];
     
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    
+    int characterLimit = 140;
+    NSString *newText = [self.tweetText.text stringByReplacingCharactersInRange:range withString:text];
+    
+    return newText.length < characterLimit;
 }
 
 @end

@@ -148,5 +148,20 @@ static NSString * const consumerSecret = @"s5ynGqXzstUZwFPxVyMDkYh197qvHOcVM3kwv
     }];
 }
 
+- (void)getUser:(void(^)(User *user, NSError *))completion{
+
+    [self GET:@"1.1/account/verify_credentials.json"
+   parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, NSDictionary *  _Nullable userObject) {
+       NSData *data = [NSKeyedArchiver archivedDataWithRootObject:userObject];
+       [[NSUserDefaults standardUserDefaults] setValue:data forKey:@"user_info"];
+       User *user = [[User alloc] initWithDictionary:userObject];
+       completion(user, nil);
+       NSLog(@"Succesfully got user");
+   } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+       NSLog(@"Didn't get user");
+   }];
+    
+}
+
 
 @end
